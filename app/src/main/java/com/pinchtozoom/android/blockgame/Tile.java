@@ -2,9 +2,9 @@ package com.pinchtozoom.android.blockgame;
 
 class Tile {
 
-    private int column;
-    private int row;
-    private TileType tileType;
+    int column;
+    int row;
+    TileType tileType;
 
     static Tile createTile(int row, int column, TileType tileType) {
         Tile tile = new Tile();

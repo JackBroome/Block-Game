@@ -1,7 +1,5 @@
 package com.pinchtozoom.android.blockgame;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -64,10 +62,8 @@ class Level {
                             default:
 
                     }
-                    Log.d("", jsonObject.toString());
                 }
             }
-            Log.d("", this + "");
         } catch (Exception e) {
             e.printStackTrace();
         }

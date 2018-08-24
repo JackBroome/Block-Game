@@ -2,10 +2,10 @@ package com.pinchtozoom.android.blockgame;
 
 class Block {
 
-    private int column;
-    private int row;
-    private BlockType blockType;
-    private boolean hasDiamond;
+    int column;
+    int row;
+    BlockType blockType;
+    boolean hasDiamond;
 
     static Block createBlock(int row, int column, BlockType blockType, boolean hasDiamond) {
         Block block = new Block();
