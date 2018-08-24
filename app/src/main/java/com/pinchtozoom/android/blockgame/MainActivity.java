@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.GridLayout;
@@ -12,13 +15,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
+
 public class MainActivity extends AppCompatActivity {
 
     int linearPositionTiles = 0, linearPositionBlocks = 0;
 
     GridLayout tileLayout, blockLayout;
 
-    int characterPosition;
+    int characterPosition, characterWidth, characterHeight;
+
+    GestureDetector gestureDetector;
+
+    Tile[][] tilesArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         int height = getWidthHeight()[0];
         int width = getWidthHeight()[1];
 
-        Tile[][] tilesArray =  level.getTiles();
+        tilesArray =  level.getTiles();
 
         int rowCount = tilesArray.length;
         int columnCount = tilesArray[0].length;
@@ -104,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
         blockLayout.setRowCount(rowCount);
         blockLayout.setColumnCount(columnCount);
 
-        final int characterWidth = width / columnCount;
-        final int characterHeight = height / rowCount;
+        characterWidth = width / columnCount;
+        characterHeight = height / rowCount;
 
         for (Block[] blocks : blocksArray) {
             for (final Block block : blocks) {
 
-                ImageView view = new ImageView(this);
+                final ImageView view = new ImageView(this);
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(characterWidth, characterHeight);
                 view.setLayoutParams(layoutParams);
 
@@ -146,13 +155,19 @@ public class MainActivity extends AppCompatActivity {
                     view.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
 
                     characterPosition = linearPositionBlocks;
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
 
-                            characterPosition = Movement.moveCharacter(view, characterPosition, this, blockLayout, new int[] {characterHeight, characterWidth});
+                    gestureDetector = new GestureDetector(this, new OnSwipeListener() {
+
+                        @Override
+                        public boolean onSwipe(Direction direction) {
+
+                            Log.w("", direction + "");
+                            characterPosition = Movement.moveCharacter(tilesArray, characterPosition, onTouchListener, blockLayout, tileLayout, new int[]{characterHeight, characterWidth}, direction);
+                            return true;
                         }
                     });
+
+                    view.setOnTouchListener(onTouchListener);
                 }
 
                 blockLayout.addView(view, linearPositionBlocks);
@@ -169,4 +184,13 @@ public class MainActivity extends AppCompatActivity {
         int width = displayMetrics.widthPixels;
         return new int[] {height, width};
     }
+
+    View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            gestureDetector.onTouchEvent(motionEvent);
+            return true;
+        }
+    };
 }

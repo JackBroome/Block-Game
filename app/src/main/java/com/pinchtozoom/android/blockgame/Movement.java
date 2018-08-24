@@ -8,50 +8,98 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
+
 class Movement {
 
-    static int moveCharacter(View view, int position, View.OnClickListener listener, GridLayout blockLayout, int[] blockHeightWidth) {
+    static int moveCharacter(Tile[][] tiles, int position, View.OnTouchListener listener, GridLayout blockLayout, GridLayout tileLayout, int[] blockHeightWidth, OnSwipeListener.Direction direction) {
 
         RelativeLayout relativeLayout = (RelativeLayout) blockLayout.getParent();
         final ImageView character = relativeLayout.findViewById(R.id.character);
 
-        int blockHeight = blockHeightWidth[0];
-        int blockWidth = blockHeightWidth[1];
+        ImageView currentChild = (ImageView) blockLayout.getChildAt(position);
 
-        ImageView currentChild = (ImageView) view;
+        int targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
 
-        int color = Color.TRANSPARENT;
-        Drawable background = view.getBackground();
-        if (background instanceof ColorDrawable) color = ((ColorDrawable) background).getColor();
+        if (checkTargetPosition(targetPosition, tiles)) {
 
-        final Drawable drawable = currentChild.getDrawable();
+            position = targetPosition;
 
-        currentChild.setBackgroundColor(Color.TRANSPARENT);
-        currentChild.setImageDrawable(null);
+            ImageView targetChild = (ImageView) blockLayout.getChildAt(position);
 
-        character.setLayoutParams(new RelativeLayout.LayoutParams(blockWidth, blockHeight));
-        character.setImageDrawable(drawable);
-        character.setBackgroundColor(color);
-        character.setVisibility(View.VISIBLE);
-        character.setX(currentChild.getX());
-        character.setY(currentChild.getY());
+            int blockHeight = blockHeightWidth[0];
+            int blockWidth = blockHeightWidth[1];
 
-        final ImageView targetChild = (ImageView) blockLayout.getChildAt(position + 1);
+            int color = Color.TRANSPARENT;
+            Drawable background = currentChild.getBackground();
+            if (background instanceof ColorDrawable)
+                color = ((ColorDrawable) background).getColor();
 
-        final int finalColor = color;
-        character.animate().x(targetChild.getX()).y(targetChild.getY()).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                targetChild.setImageDrawable(drawable);
-                targetChild.setBackgroundColor(finalColor);
+            final Drawable drawable = currentChild.getDrawable();
 
-                character.setVisibility(View.GONE);
-            }
-        });
+            currentChild.setBackgroundColor(Color.TRANSPARENT);
+            currentChild.setImageDrawable(null);
 
-        position = position + 1;
-        currentChild.setOnClickListener(null);
-        targetChild.setOnClickListener(listener);
+            character.setLayoutParams(new RelativeLayout.LayoutParams(blockWidth, blockHeight));
+            character.setImageDrawable(drawable);
+            character.setBackgroundColor(color);
+            character.setVisibility(View.VISIBLE);
+            character.setX(currentChild.getX());
+            character.setY(currentChild.getY());
+
+            final int finalColor = color;
+            final ImageView finalTargetChild = targetChild;
+            character.animate().x(finalTargetChild.getX()).y(finalTargetChild.getY()).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    finalTargetChild.setImageDrawable(drawable);
+                    finalTargetChild.setBackgroundColor(finalColor);
+                    character.setVisibility(View.GONE);
+                }
+            });
+
+            currentChild.setOnTouchListener(null);
+            finalTargetChild.setOnTouchListener(listener);
+        }
         return position;
+    }
+
+    private static int calculatePosition(OnSwipeListener.Direction direction, int position, int columnCount) {
+        switch (direction) {
+
+            case up:
+                return position - columnCount;
+
+            case down:
+                return position + columnCount;
+
+            case left:
+                return position - 1;
+
+            case right:
+                return position + 1;
+
+            default:
+                return position;
+        }
+    }
+
+    private static boolean checkTargetPosition(int position, Tile[][] tiles) {
+
+        int columnCount = tiles[0].length;
+        int row = position / columnCount;
+        int column = position % columnCount;
+
+        Tile tile = tiles[row][column];
+
+        if (tile == null) {
+            return true;
+        }
+
+        if (tile.tileType == TileType.WALL) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
