@@ -10,6 +10,7 @@ class Block {
     BlockType blockType;
     View.OnTouchListener touchListener;
     GestureDetector gestureDetector;
+    int characterPosition;
     boolean hasDiamond;
 
     static Block createBlock(int row, int column, BlockType blockType, boolean hasDiamond) {

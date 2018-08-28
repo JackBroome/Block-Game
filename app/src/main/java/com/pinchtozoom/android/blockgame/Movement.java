@@ -15,14 +15,16 @@ import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
 class Movement {
 
     static int moveCharacter(final Context context, final Tile[][] tiles, final Block[][] blocks,
-                             int position, final GridLayout blockLayout,
+                             Block block, final GridLayout blockLayout,
                              int[] blockHeightWidth, OnSwipeListener.Direction direction, final CallBackListener completedListener, final BlockArrayCallbackListener arrayUpdated) {
 
         RelativeLayout relativeLayout = (RelativeLayout) blockLayout.getParent();
         final ImageView character = relativeLayout.findViewById(R.id.character);
 
+        final Block currentBlock = block;
+        int position = currentBlock.characterPosition;
+
         ImageView currentChild = (ImageView) blockLayout.getChildAt(position);
-        final Block currentBlock = Brain.getBlock(position, blocks);
 
         final int originalPosition = position;
 

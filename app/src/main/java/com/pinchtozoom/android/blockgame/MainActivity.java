@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     GridLayout tileLayout, blockLayout;
 
-    int characterPosition, characterWidth, characterHeight;
+    int characterWidth, characterHeight;
 
     Tile[][] tilesArray;
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 if (block != null && block.hasDiamond) {
                     view.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
 
-                    characterPosition = linearPositionBlocks;
+                    block.characterPosition = linearPositionBlocks;
 
                     block.gestureDetector = new GestureDetector(this, new OnSwipeListener() {
 
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         public boolean onSwipe(Direction direction) {
 
                             Log.w("", direction + "");
-                            characterPosition = Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, characterPosition, blockLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
+                            Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, block, blockLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
                                 @Override
                                 public void callback() {
                                     Toast.makeText(MainActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
