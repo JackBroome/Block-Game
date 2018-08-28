@@ -14,8 +14,17 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
+
+interface CallBackListener {
+    void callback();
+}
+
+interface BlockArrayCallbackListener {
+    void callback(Block[][] blocks);
+}
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,9 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     int characterPosition, characterWidth, characterHeight;
 
-    GestureDetector gestureDetector;
-
     Tile[][] tilesArray;
+
+    Block[][] blocksArray;
+
+    Level level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         tileLayout = findViewById(R.id.tile_layout);
         blockLayout = findViewById(R.id.block_layout);
 
-        Level level = new Level();
-        level.initialiseGrid();
+        level = new Level();
+        level.initialiseGrid(1);
 
         loadTiles(level);
         loadBlocks(level);
@@ -51,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         int height = getWidthHeight()[0];
         int width = getWidthHeight()[1];
 
-        tilesArray =  level.getTiles();
+        tilesArray =  level.tiles;
 
         int rowCount = tilesArray.length;
         int columnCount = tilesArray[0].length;
@@ -105,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         final int height = getWidthHeight()[0];
         int width = getWidthHeight()[1];
 
-        Block[][] blocksArray = level.getBlocks();
+        blocksArray = level.blocks;
 
         int rowCount = blocksArray.length;
         final int columnCount = blocksArray[0].length;
@@ -156,18 +167,38 @@ public class MainActivity extends AppCompatActivity {
 
                     characterPosition = linearPositionBlocks;
 
-                    gestureDetector = new GestureDetector(this, new OnSwipeListener() {
+                    block.gestureDetector = new GestureDetector(this, new OnSwipeListener() {
 
                         @Override
                         public boolean onSwipe(Direction direction) {
 
                             Log.w("", direction + "");
-                            characterPosition = Movement.moveCharacter(tilesArray, characterPosition, onTouchListener, blockLayout, tileLayout, new int[]{characterHeight, characterWidth}, direction);
+                            characterPosition = Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, characterPosition, blockLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
+                                @Override
+                                public void callback() {
+                                    Toast.makeText(MainActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
+                                    levelCompleteListener.callback();
+                                }
+                            }, new BlockArrayCallbackListener() {
+                                @Override
+                                public void callback(Block[][] blocks) {
+                                    MainActivity.this.blocksArray = blocks;
+                                }
+                            });
                             return true;
                         }
                     });
 
-                    view.setOnTouchListener(onTouchListener);
+                    block.touchListener = new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                            block.gestureDetector.onTouchEvent(motionEvent);
+                            return true;
+                        }
+                    };
+
+                    view.setOnTouchListener(block.touchListener);
                 }
 
                 blockLayout.addView(view, linearPositionBlocks);
@@ -185,12 +216,25 @@ public class MainActivity extends AppCompatActivity {
         return new int[] {height, width};
     }
 
-    View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+    CallBackListener levelCompleteListener = new CallBackListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
+        public void callback() {
 
-            gestureDetector.onTouchEvent(motionEvent);
-            return true;
+            for (Tile[] tiles : tilesArray) {
+                for (Tile tile : tiles) {
+                    tileLayout.removeViewAt(0);
+                    blockLayout.removeViewAt(0);
+                }
+            }
+
+            Level level = new Level();
+            level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
+
+            linearPositionBlocks = 0;
+            linearPositionTiles = 0;
+
+            loadTiles(level);
+            loadBlocks(level);
         }
     };
 }

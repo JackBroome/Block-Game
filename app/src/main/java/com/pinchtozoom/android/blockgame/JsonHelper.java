@@ -5,10 +5,10 @@ import java.io.InputStream;
 
 public class JsonHelper {
 
-    public static String loadJSONFromAsset() {
+    public static String loadJSONFromAsset(int level) {
         String json = null;
         try {
-            InputStream is = AppDelegate.getAppContext().getAssets().open("Level_1.json");
+            InputStream is = AppDelegate.getAppContext().getAssets().open(String.format("Level_%s.json", level));
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);

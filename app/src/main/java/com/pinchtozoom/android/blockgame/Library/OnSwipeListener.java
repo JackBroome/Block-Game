@@ -35,38 +35,6 @@ public class OnSwipeListener extends GestureDetector.SimpleOnGestureListener {
         }
     }
 
-//    @Override
-//    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//
-//        // Grab two events located on the plane at e1=(x1, y1) and e2=(x2, y2)
-//        // Let e1 be the initial event
-//        // e2 can be located at 4 different positions, consider the following diagram
-//        // (Assume that lines are separated by 90 degrees.)
-//        //
-//        //
-//        //         \ A  /
-//        //          \  /
-//        //       D   e1   B
-//        //          /  \
-//        //         / C  \
-//        //
-//        // So if (x2,y2) falls in region:
-//        //  A => it's an UP swipe
-//        //  B => it's a RIGHT swipe
-//        //  C => it's a DOWN swipe
-//        //  D => it's a LEFT swipe
-//        //
-//
-//        float x1 = e1.getX();
-//        float y1 = e1.getY();
-//
-//        float x2 = e2.getX();
-//        float y2 = e2.getY();
-//
-//        Direction direction = getDirection(x1,y1,x2,y2);
-//        return onSwipe(direction);
-//    }
-
     /** Override this method. The Direction enum will tell you how the user swiped. */
     public boolean onSwipe(Direction direction){
         return false;

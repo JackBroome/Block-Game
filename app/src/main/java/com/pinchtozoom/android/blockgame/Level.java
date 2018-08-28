@@ -5,19 +5,23 @@ import org.json.JSONObject;
 
 class Level {
 
-    private Tile [][] tiles;
-    private Block [][] blocks;
+    int levelNumber;
 
-    private int numberOfRows;
-    private int numberOfColumns;
+    Tile [][] tiles;
+    Block [][] blocks;
 
-    private int bronzeScore = 0;
+    int numberOfRows;
+    int numberOfColumns;
 
-    void initialiseGrid() {
+    int bronzeScore = 0;
+
+    void initialiseGrid(int level) {
 
         try {
 
-            JSONObject jsonObject = new JSONObject(JsonHelper.loadJSONFromAsset());
+            this.levelNumber = level;
+
+            JSONObject jsonObject = new JSONObject(JsonHelper.loadJSONFromAsset(level));
 
             JSONArray jsonArray = (JSONArray) jsonObject.get("tiles");
             numberOfRows = jsonArray.length();
@@ -35,28 +39,59 @@ class Level {
                     switch (value) {
 
                         case "w":
-
                             tiles[row][column] = Tile.createTile(row, column, TileType.WALL);
                             break;
 
                         case "v":
-
                             tiles[row][column] = Tile.createTile(row, column, TileType.VORTEX);
                             break;
 
                         case "j":
-
                             tiles[row][column] = Tile.createTile(row, column, TileType.JELLY);
                             break;
 
-                        case "s":
+                        case "h":
+                            tiles[row][column] = Tile.createTile(row, column, TileType.HOLE);
+                            break;
 
+                        case "s":
                             blocks[row][column] = Block.createBlock(row, column, BlockType.STONE, false);
                             break;
 
                         case "s*":
-
                             blocks[row][column] = Block.createBlock(row, column, BlockType.STONE, true);
+                            break;
+
+                        case "o":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.OIL, false);
+                            break;
+
+                        case "o*":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.OIL, true);
+                            break;
+
+                        case "b":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.BULLDOZER, false);
+                            break;
+
+                        case "b*":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.BULLDOZER, true);
+                            break;
+
+                        case "p":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.PAWN, false);
+                            break;
+
+                        case "p*":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.PAWN, true);
+                            break;
+
+                        case "c":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.CASTLE, false);
+                            break;
+
+                        case "c*":
+                            blocks[row][column] = Block.createBlock(row, column, BlockType.CASTLE, true);
                             break;
 
                             default:
@@ -67,29 +102,5 @@ class Level {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public Tile[][] getTiles() {
-        return tiles;
-    }
-
-    public void setTiles(Tile[][] tiles) {
-        this.tiles = tiles;
-    }
-
-    public Block[][] getBlocks() {
-        return blocks;
-    }
-
-    public void setBlocks(Block[][] blocks) {
-        this.blocks = blocks;
-    }
-
-    public int getBronzeScore() {
-        return bronzeScore;
-    }
-
-    public void setBronzeScore(int bronzeScore) {
-        this.bronzeScore = bronzeScore;
     }
 }

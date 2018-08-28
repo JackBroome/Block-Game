@@ -1,5 +1,6 @@
 package com.pinchtozoom.android.blockgame;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -7,25 +8,39 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
 
 class Movement {
 
-    static int moveCharacter(Tile[][] tiles, int position, View.OnTouchListener listener, GridLayout blockLayout, GridLayout tileLayout, int[] blockHeightWidth, OnSwipeListener.Direction direction) {
+    static int moveCharacter(final Context context, final Tile[][] tiles, final Block[][] blocks,
+                             int position, final GridLayout blockLayout,
+                             int[] blockHeightWidth, OnSwipeListener.Direction direction, final CallBackListener completedListener, final BlockArrayCallbackListener arrayUpdated) {
 
         RelativeLayout relativeLayout = (RelativeLayout) blockLayout.getParent();
         final ImageView character = relativeLayout.findViewById(R.id.character);
 
         ImageView currentChild = (ImageView) blockLayout.getChildAt(position);
+        final Block currentBlock = Brain.getBlock(position, blocks);
 
-        int targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
+        final int originalPosition = position;
 
-        if (checkTargetPosition(targetPosition, tiles)) {
+        final int targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
+        final Tile tile = Brain.getTile(targetPosition, tiles);
+
+        if (tile == null || tile.tileType != TileType.WALL) {
+
+            final Block targetBlock = Brain.getBlock(targetPosition, blocks);
+
+            if (targetBlock != null && !targetBlock.hasDiamond) {
+                return position;
+            }
+            currentChild.setOnTouchListener(null);
 
             position = targetPosition;
 
-            ImageView targetChild = (ImageView) blockLayout.getChildAt(position);
+            final ImageView targetChild = (ImageView) blockLayout.getChildAt(position);
 
             int blockHeight = blockHeightWidth[0];
             int blockWidth = blockHeightWidth[1];
@@ -55,11 +70,32 @@ class Movement {
                     finalTargetChild.setImageDrawable(drawable);
                     finalTargetChild.setBackgroundColor(finalColor);
                     character.setVisibility(View.GONE);
+
+                    final Block[][][] updatedBlocks = {null};
+
+                    Brain.updateArray(blocks, originalPosition, targetPosition, new BlockArrayCallbackListener() {
+                        @Override
+                        public void callback(Block[][] blocks) {
+                            updatedBlocks[0] = blocks;
+                            arrayUpdated.callback(blocks);
+                        }
+                    });
+
+                    Block touchBlock = Brain.getBlock(targetPosition, updatedBlocks[0]);
+
+                    touchBlock.touchListener = currentBlock.touchListener;
+
+                    finalTargetChild.setOnTouchListener(touchBlock.touchListener);
+
+                    Brain.fateCalculator(tile, targetChild, new CallBackListener() {
+                        @Override
+                        public void callback() {
+                            Toast.makeText(context, "Level Complete", Toast.LENGTH_SHORT).show();
+                            completedListener.callback();
+                        }
+                    });
                 }
             });
-
-            currentChild.setOnTouchListener(null);
-            finalTargetChild.setOnTouchListener(listener);
         }
         return position;
     }
@@ -81,25 +117,6 @@ class Movement {
 
             default:
                 return position;
-        }
-    }
-
-    private static boolean checkTargetPosition(int position, Tile[][] tiles) {
-
-        int columnCount = tiles[0].length;
-        int row = position / columnCount;
-        int column = position % columnCount;
-
-        Tile tile = tiles[row][column];
-
-        if (tile == null) {
-            return true;
-        }
-
-        if (tile.tileType == TileType.WALL) {
-            return false;
-        } else {
-            return true;
         }
     }
 }
