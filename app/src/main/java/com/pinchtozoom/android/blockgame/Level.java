@@ -19,7 +19,7 @@ class Level {
 
         try {
 
-            this.levelNumber = level;
+            levelNumber = level;
 
             JSONObject jsonObject = new JSONObject(JsonHelper.loadJSONFromAsset(level));
 
@@ -39,19 +39,19 @@ class Level {
                     switch (value) {
 
                         case "w":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.WALL);
+                            tiles[row][column] = Tile.createTile(row, column, TileType.WALL, false);
                             break;
 
                         case "v":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.VORTEX);
+                            tiles[row][column] = Tile.createTile(row, column, TileType.VORTEX, true);
                             break;
 
                         case "j":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.JELLY);
+                            tiles[row][column] = Tile.createTile(row, column, TileType.JELLY, false);
                             break;
 
                         case "h":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.HOLE);
+                            tiles[row][column] = Tile.createTile(row, column, TileType.HOLE, true);
                             break;
 
                         case "s":

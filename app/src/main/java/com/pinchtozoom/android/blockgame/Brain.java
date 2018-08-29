@@ -1,27 +1,18 @@
 package com.pinchtozoom.android.blockgame;
 
-import android.view.View;
-import android.widget.ImageView;
-
 public class Brain {
 
-    static void fateCalculator(Tile tile, final ImageView view, CallBackListener callBackListener) {
+    static TileType getType(Tile tile) {
 
         if (tile != null && tile.tileType == TileType.HOLE) {
-            callBackListener.callback();
+            return TileType.HOLE;
         }
 
         if (tile != null && tile.tileType == TileType.VORTEX) {
-            view.animate().scaleY(0.1f).scaleX(0.1f).rotation(270).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    view.setVisibility(View.INVISIBLE);
-                    view.setClickable(false);
-                    view.setFocusable(false);
-                    view.setEnabled(false);
-                }
-            });
+          return TileType.VORTEX;
         }
+
+        return null;
     }
 
     static void updateArray(Block[][] blocks, int currentPosition, int targetPosition, BlockArrayCallbackListener blockArrayCallbackListener) {

@@ -2,6 +2,7 @@ package com.pinchtozoom.android.blockgame;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -13,10 +14,12 @@ import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 interface CallBackListener {
     void callback();
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         tileLayout = findViewById(R.id.tile_layout);
         blockLayout = findViewById(R.id.block_layout);
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         int height = getWidthHeight()[0];
         int width = getWidthHeight()[1];
 
-        tilesArray =  level.tiles;
+        tilesArray = level.tiles;
 
         int rowCount = tilesArray.length;
         int columnCount = tilesArray[0].length;
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         for (Tile[] tiles : tilesArray) {
             for (Tile tile : tiles) {
 
-                TextView view = new TextView(this);
+                ImageView view = new ImageView(this);
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(blockWidth, blockHeight);
                 view.setLayoutParams(layoutParams);
 
@@ -162,8 +165,10 @@ public class MainActivity extends AppCompatActivity {
                     view.setBackgroundColor(Color.TRANSPARENT);
                 }
 
-                if (block != null && block.hasDiamond) {
-                    view.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+                if (block != null) {
+                    if (block.hasDiamond) {
+                        view.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+                    }
 
                     block.characterPosition = linearPositionBlocks;
 
@@ -173,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         public boolean onSwipe(Direction direction) {
 
                             Log.w("", direction + "");
-                            Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, block, blockLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
+                            Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, block, blockLayout, tileLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
                                 @Override
                                 public void callback() {
                                     Toast.makeText(MainActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
@@ -213,28 +218,76 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        return new int[] {height, width};
+        return new int[]{height, width};
     }
 
     CallBackListener levelCompleteListener = new CallBackListener() {
         @Override
         public void callback() {
 
-            for (Tile[] tiles : tilesArray) {
-                for (Tile tile : tiles) {
-                    tileLayout.removeViewAt(0);
-                    blockLayout.removeViewAt(0);
+            final Handler mainHandler = new Handler(getMainLooper());
+
+            int r = tileLayout.getRowCount();
+            int c = tileLayout.getColumnCount();
+
+            final int[] tileCount = {tileLayout.getRowCount() * tileLayout.getColumnCount()};
+
+            final Timer timer = new Timer();
+
+            TimerTask timerTask = new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    ImageView tile = (ImageView) tileLayout.getChildAt(tileCount[0] - 1);
+                    ImageView block = (ImageView) blockLayout.getChildAt(tileCount[0] - 1);
+
+                    if (block != null) {
+                        block.animate().alpha(0).scaleX(0).scaleY(0);
+                    }
+
+                    if (tile != null) {
+                        tile.animate().alpha(0).scaleX(0).scaleY(0);
+                    } else {
+                        timer.cancel();
+
+                        mainHandler.postDelayed(myRunnable, 225);
+                    }
+                    tileCount[0]--;
                 }
-            }
+            };
+
+            timer.scheduleAtFixedRate(timerTask, 0, 25);
+        }
+    };
+
+    Runnable myRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            tileLayout.removeAllViews();
+            blockLayout.removeAllViews();
+
+            tileLayout.setAlpha(0f);
+            blockLayout.setAlpha(0f);
 
             Level level = new Level();
-            level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
+            if (MainActivity.this.level.levelNumber == 3) {
+                level.initialiseGrid(MainActivity.this.level.levelNumber);
+            } else {
+                level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
+            }
+
+            MainActivity.this.level = level;
 
             linearPositionBlocks = 0;
             linearPositionTiles = 0;
 
             loadTiles(level);
             loadBlocks(level);
+
+            tileLayout.animate().alpha(1);
+            blockLayout.animate().alpha(1);
         }
     };
 }

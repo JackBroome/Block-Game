@@ -5,16 +5,19 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context=".MainActivity">
 
     <GridLayout
         android:id="@+id/tile_layout"
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </GridLayout>
 
     <GridLayout
         android:id="@+id/block_layout"
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </GridLayout>
