@@ -36,10 +36,17 @@ class Movement {
 
         final int targetPosition;
 
-        if (block.blockType == BlockType.CASTLE) {
-            targetPosition = calculateCastlePosition(direction, position, blockLayout.getColumnCount(), blocks, tiles);
-        } else {
-            targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
+        switch (block.blockType) {
+
+            case CASTLE:
+                targetPosition = calculateCastlePosition(direction, position, blockLayout.getColumnCount(), blocks, tiles);
+                break;
+            case STONE:
+                targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
+                break;
+            default:
+                targetPosition = calculatePosition(direction, position, blockLayout.getColumnCount());
+                break;
         }
 
         final Tile tile = Brain.getTile(targetPosition, tiles);

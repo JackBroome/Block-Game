@@ -1,5 +1,7 @@
 package com.pinchtozoom.android.blockgame;
 
+import android.widget.TextView;
+
 public class Brain {
 
     static TileType getType(Tile tile) {
@@ -45,5 +47,11 @@ public class Brain {
         int row = position / columnCount;
         int column = position % columnCount;
         return blocks[row][column];
+    }
+
+    static void populateScores(Level level, TextView goldScore, TextView silverScore, TextView bronzeScore) {
+        goldScore.setText(String.format("%s", level.goldScore));
+        silverScore.setText(String.format("%s", level.silverScore));
+        bronzeScore.setText(String.format("%s", level.bronzeScore));
     }
 }

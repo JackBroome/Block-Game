@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -11,9 +12,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
@@ -43,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
     Level level;
 
+    Button pauseButton;
+
+    Handler mainHandler;
+
+    boolean levelRestarted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +59,49 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        mainHandler = new Handler(getMainLooper());
+
         tileLayout = findViewById(R.id.tile_layout);
         blockLayout = findViewById(R.id.block_layout);
+
+        pauseButton = findViewById(R.id.pause_button);
 
         level = new Level();
         level.initialiseGrid(1);
 
         loadTiles(level);
         loadBlocks(level);
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                View pauseLayout = getLayoutInflater().inflate(R.layout.pause_layout, null);
+
+                Brain.populateScores(level,
+                        (TextView) pauseLayout.findViewById(R.id.gold_score),
+                        (TextView) pauseLayout.findViewById(R.id.silver_score),
+                        (TextView) pauseLayout.findViewById(R.id.bronze_score));
+
+                pauseLayout.findViewById(R.id.button_resume).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+                pauseLayout.findViewById(R.id.button_restart).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        levelRestarted = true;
+                        destroyLevel.callback();
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.setView(pauseLayout);
+                alertDialog.show();
+            }
+        });
     }
 
     private void loadTiles(Level level) {
@@ -76,11 +120,14 @@ public class MainActivity extends AppCompatActivity {
         int blockWidth = width / columnCount;
         int blockHeight = height / rowCount;
 
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(blockWidth, blockHeight);
+
+        pauseButton.setLayoutParams(layoutParams);
+
         for (Tile[] tiles : tilesArray) {
             for (Tile tile : tiles) {
 
                 ImageView view = new ImageView(this);
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(blockWidth, blockHeight);
                 view.setLayoutParams(layoutParams);
 
                 if (tile != null) {
@@ -182,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void callback() {
                                     Toast.makeText(MainActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
-                                    levelCompleteListener.callback();
+                                    destroyLevel.callback();
                                 }
                             }, new BlockArrayCallbackListener() {
                                 @Override
@@ -221,11 +268,9 @@ public class MainActivity extends AppCompatActivity {
         return new int[]{height, width};
     }
 
-    CallBackListener levelCompleteListener = new CallBackListener() {
+    CallBackListener destroyLevel = new CallBackListener() {
         @Override
         public void callback() {
-
-            final Handler mainHandler = new Handler(getMainLooper());
 
             int r = tileLayout.getRowCount();
             int c = tileLayout.getColumnCount();
@@ -251,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         timer.cancel();
 
-                        mainHandler.postDelayed(myRunnable, 225);
+                        mainHandler.postDelayed(buildLevel, 225);
                     }
                     tileCount[0]--;
                 }
@@ -261,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    Runnable myRunnable = new Runnable() {
+    Runnable buildLevel = new Runnable() {
         @Override
         public void run() {
 
@@ -272,11 +317,13 @@ public class MainActivity extends AppCompatActivity {
             blockLayout.setAlpha(0f);
 
             Level level = new Level();
-            if (MainActivity.this.level.levelNumber == 3) {
+            if (MainActivity.this.level.levelNumber == 3 || levelRestarted) {
                 level.initialiseGrid(MainActivity.this.level.levelNumber);
             } else {
                 level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
             }
+
+            levelRestarted = false;
 
             MainActivity.this.level = level;
 

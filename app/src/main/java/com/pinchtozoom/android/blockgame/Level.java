@@ -13,7 +13,11 @@ class Level {
     int numberOfRows;
     int numberOfColumns;
 
-    int bronzeScore = 0;
+    int bronzeScore;
+    int silverScore;
+    int goldScore;
+    int lowestMoves;
+    boolean canRotate;
 
     void initialiseGrid(int level) {
 
@@ -22,6 +26,13 @@ class Level {
             levelNumber = level;
 
             JSONObject jsonObject = new JSONObject(JsonHelper.loadJSONFromAsset(level));
+
+            bronzeScore = jsonObject.getInt("bronzeScore");
+            silverScore = jsonObject.getInt("silverScore");
+            goldScore = jsonObject.getInt("goldScore");
+            lowestMoves = jsonObject.getInt("lowestMoves");
+
+            canRotate = jsonObject.getBoolean("canRotate");
 
             JSONArray jsonArray = (JSONArray) jsonObject.get("tiles");
             numberOfRows = jsonArray.length();
