@@ -72,6 +72,53 @@ public class MainActivity extends AppCompatActivity {
         loadTiles(level);
         loadBlocks(level);
 
+        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final View overlayLayout = getLayoutInflater().inflate(R.layout.level_overlay, null);
+
+        Brain.populateScores(level,
+                (TextView) overlayLayout.findViewById(R.id.gold_score),
+                (TextView) overlayLayout.findViewById(R.id.silver_score),
+                (TextView) overlayLayout.findViewById(R.id.bronze_score));
+
+        alertDialog.setView(overlayLayout);
+        alertDialog.show();
+
+        final Timer timer = new Timer();
+
+        TimerTask timerTask = new TimerTask() {
+
+            @Override
+            public void run() {
+
+                overlayLayout.findViewById(R.id.level_overlay).animate().alpha(0);
+                alertDialog.dismiss();
+
+            }
+        };
+        timer.schedule(timerTask, 2000);
+    }
+
+    private void loadTiles(final Level level) {
+
+        int height = getWidthHeight()[0];
+        int width = getWidthHeight()[1];
+
+        tilesArray = level.tiles;
+
+        int rowCount = tilesArray.length;
+        int columnCount = tilesArray[0].length;
+
+        tileLayout.setRowCount(rowCount);
+        tileLayout.setColumnCount(columnCount);
+
+        int blockWidth = width / columnCount;
+        int blockHeight = height / rowCount;
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(blockWidth, blockHeight);
+
+        pauseButton.setLayoutParams(layoutParams);
+
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,27 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-    }
-
-    private void loadTiles(Level level) {
-
-        int height = getWidthHeight()[0];
-        int width = getWidthHeight()[1];
-
-        tilesArray = level.tiles;
-
-        int rowCount = tilesArray.length;
-        int columnCount = tilesArray[0].length;
-
-        tileLayout.setRowCount(rowCount);
-        tileLayout.setColumnCount(columnCount);
-
-        int blockWidth = width / columnCount;
-        int blockHeight = height / rowCount;
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(blockWidth, blockHeight);
-
-        pauseButton.setLayoutParams(layoutParams);
 
         for (Tile[] tiles : tilesArray) {
             for (Tile tile : tiles) {
@@ -272,6 +298,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void callback() {
 
+            pauseButton.setOnClickListener(null);
+
             int r = tileLayout.getRowCount();
             int c = tileLayout.getColumnCount();
 
@@ -335,6 +363,32 @@ public class MainActivity extends AppCompatActivity {
 
             tileLayout.animate().alpha(1);
             blockLayout.animate().alpha(1);
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            final View overlayLayout = getLayoutInflater().inflate(R.layout.level_overlay, null);
+
+            Brain.populateScores(level,
+                    (TextView) overlayLayout.findViewById(R.id.gold_score),
+                    (TextView) overlayLayout.findViewById(R.id.silver_score),
+                    (TextView) overlayLayout.findViewById(R.id.bronze_score));
+
+            alertDialog.setView(overlayLayout);
+            alertDialog.show();
+
+            final Timer timer = new Timer();
+
+            TimerTask timerTask = new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    overlayLayout.findViewById(R.id.level_overlay).animate().alpha(0);
+                    alertDialog.dismiss();
+
+                }
+            };
+            timer.schedule(timerTask, 2000);
         }
     };
 }

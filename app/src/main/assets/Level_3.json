@@ -6,9 +6,9 @@
                 ["w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w" ],
                 ["w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w" ] ],
 
-    "bronzeScore" : 15,
-    "silverScore" : 10,
-    "goldScore" : 8,
-    "lowestMoves" : 7,
+    "bronzeScore" : 6,
+    "silverScore" : 5,
+    "goldScore" : 3,
+    "lowestMoves" : 3,
     "canRotate" : true
 }

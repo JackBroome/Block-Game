@@ -17,7 +17,7 @@ public class Brain {
         return null;
     }
 
-    static void updateArray(Block[][] blocks, int currentPosition, int targetPosition, BlockArrayCallbackListener blockArrayCallbackListener) {
+    static void updateArray(Block[][] blocks, int currentPosition, int targetPosition, boolean shouldStick, BlockArrayCallbackListener blockArrayCallbackListener) {
 
         int columnCount = blocks[0].length;
         int currentRow = currentPosition / columnCount;
@@ -28,7 +28,9 @@ public class Brain {
 
         blocks[targetRow][targetColumn] = blocks[currentRow][currentColumn];
 
-        blocks[currentRow][currentColumn] = null;
+        if (!shouldStick) {
+            blocks[currentRow][currentColumn] = null;
+        }
 
         blockArrayCallbackListener.callback(blocks);
     }
