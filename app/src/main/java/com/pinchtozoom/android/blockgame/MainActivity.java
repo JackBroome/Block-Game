@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         int levelNumber = getIntent().getIntExtra("level", 0);
 
@@ -87,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
         Brain.populateScores(level,
                 (TextView) overlayLayout.findViewById(R.id.gold_score),
                 (TextView) overlayLayout.findViewById(R.id.silver_score),
-                (TextView) overlayLayout.findViewById(R.id.bronze_score));
+                (TextView) overlayLayout.findViewById(R.id.bronze_score),
+                (TextView) overlayLayout.findViewById(R.id.level_title));
 
         alertDialog.setView(overlayLayout);
         alertDialog.show();
@@ -137,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 Brain.populateScores(level,
                         (TextView) pauseLayout.findViewById(R.id.gold_score),
                         (TextView) pauseLayout.findViewById(R.id.silver_score),
-                        (TextView) pauseLayout.findViewById(R.id.bronze_score));
+                        (TextView) pauseLayout.findViewById(R.id.bronze_score),
+                        null);
 
                 pauseLayout.findViewById(R.id.button_resume).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -382,7 +386,9 @@ public class MainActivity extends AppCompatActivity {
             Brain.populateScores(level,
                     (TextView) overlayLayout.findViewById(R.id.gold_score),
                     (TextView) overlayLayout.findViewById(R.id.silver_score),
-                    (TextView) overlayLayout.findViewById(R.id.bronze_score));
+                    (TextView) overlayLayout.findViewById(R.id.bronze_score),
+                    (TextView) overlayLayout.findViewById(R.id.level_title));
+
 
             alertDialog.setView(overlayLayout);
             alertDialog.show();

@@ -51,9 +51,12 @@ public class Brain {
         return blocks[row][column];
     }
 
-    static void populateScores(Level level, TextView goldScore, TextView silverScore, TextView bronzeScore) {
+    static void populateScores(Level level, TextView goldScore, TextView silverScore, TextView bronzeScore, TextView levelName) {
         goldScore.setText(String.format("%s", level.goldScore));
         silverScore.setText(String.format("%s", level.silverScore));
         bronzeScore.setText(String.format("%s", level.bronzeScore));
+        if (levelName != null) {
+            levelName.setText(String.format("Level %s", level.levelNumber));
+        }
     }
 }

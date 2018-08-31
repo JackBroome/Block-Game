@@ -1,4 +1,4 @@
-package com.pinchtozoom.android.blockgame.Menu;
+package com.pinchtozoom.android.blockgame;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.pinchtozoom.android.blockgame.Library.OpenGLRenderer;
-import com.pinchtozoom.android.blockgame.MainActivity;
-import com.pinchtozoom.android.blockgame.R;
 
 public class TitleScreen extends AppCompatActivity {
 
@@ -56,6 +54,5 @@ public class TitleScreen extends AppCompatActivity {
                 startActivity(new Intent(TitleScreen.this, MainActivity.class).putExtra("level", currentLevelID));
             }
         });
-
     }
 }

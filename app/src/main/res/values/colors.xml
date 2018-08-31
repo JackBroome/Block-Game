@@ -3,6 +3,7 @@
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="spacer_grey">#E0E0E0</color>
 
     <color name="colorWall">#808080</color>
     <color name="colorJelly">#FF4081</color>
