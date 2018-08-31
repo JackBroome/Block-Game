@@ -1,5 +1,7 @@
 package com.pinchtozoom.android.blockgame;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +13,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        int levelNumber = getIntent().getIntExtra("level", 0);
 
         mainHandler = new Handler(getMainLooper());
 
@@ -66,11 +68,17 @@ public class MainActivity extends AppCompatActivity {
 
         pauseButton = findViewById(R.id.pause_button);
 
+        tileLayout.setAlpha(0f);
+        blockLayout.setAlpha(0f);
+
         level = new Level();
-        level.initialiseGrid(1);
+        level.initialiseGrid(levelNumber);
 
         loadTiles(level);
         loadBlocks(level);
+
+        tileLayout.animate().alpha(1).setDuration(1500);
+        blockLayout.animate().alpha(1).setDuration(1500);
 
         final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -351,6 +359,9 @@ public class MainActivity extends AppCompatActivity {
                 level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
             }
 
+            final SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            sharedPref.edit().putInt(getString(R.string.preference_file_key_level_ID), level.levelNumber).apply();
+
             levelRestarted = false;
 
             MainActivity.this.level = level;
@@ -361,8 +372,8 @@ public class MainActivity extends AppCompatActivity {
             loadTiles(level);
             loadBlocks(level);
 
-            tileLayout.animate().alpha(1);
-            blockLayout.animate().alpha(1);
+            tileLayout.animate().alpha(1).setDuration(1500);
+            blockLayout.animate().alpha(1).setDuration(1500);
 
             final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
             alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);

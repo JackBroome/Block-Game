@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">BlockGame</string>
     <string name="title_activity_test">test</string>
+
+    <string name="preference_file_key">BlockGameSharedPreferences</string>
+    <string name="preference_file_key_level_ID">levelID</string>
 </resources>
