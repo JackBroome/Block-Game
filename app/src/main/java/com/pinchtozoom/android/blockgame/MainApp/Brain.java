@@ -1,23 +1,28 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.MainApp;
 
 import android.widget.TextView;
 
+import com.pinchtozoom.android.blockgame.Interface.BlockArrayCallbackListener;
+import com.pinchtozoom.android.blockgame.Objects.Block;
+import com.pinchtozoom.android.blockgame.Objects.Level;
+import com.pinchtozoom.android.blockgame.Objects.Tile;
+
 public class Brain {
 
-    static TileType getType(Tile tile) {
+    public static Tile.TileType getType(Tile tile) {
 
-        if (tile != null && tile.tileType == TileType.HOLE) {
-            return TileType.HOLE;
+        if (tile != null && tile.tileType == Tile.TileType.HOLE) {
+            return Tile.TileType.HOLE;
         }
 
-        if (tile != null && tile.tileType == TileType.VORTEX) {
-          return TileType.VORTEX;
+        if (tile != null && tile.tileType == Tile.TileType.VORTEX) {
+          return Tile.TileType.VORTEX;
         }
 
         return null;
     }
 
-    static void updateArray(Block[][] blocks, int currentPosition, int targetPosition, boolean shouldStick, BlockArrayCallbackListener blockArrayCallbackListener) {
+    public static void updateArray(Block[][] blocks, int currentPosition, int targetPosition, boolean shouldStick, BlockArrayCallbackListener blockArrayCallbackListener) {
 
         int columnCount = blocks[0].length;
         int currentRow = currentPosition / columnCount;
@@ -35,7 +40,7 @@ public class Brain {
         blockArrayCallbackListener.callback(blocks);
     }
 
-    static Tile getTile(int position, Tile[][] tiles) {
+    public static Tile getTile(int position, Tile[][] tiles) {
 
         int columnCount = tiles[0].length;
         int row = position / columnCount;
@@ -43,7 +48,7 @@ public class Brain {
         return tiles[row][column];
     }
 
-    static Block getBlock(int position, Block[][] blocks) {
+    public static Block getBlock(int position, Block[][] blocks) {
 
         int columnCount = blocks[0].length;
         int row = position / columnCount;
@@ -51,7 +56,7 @@ public class Brain {
         return blocks[row][column];
     }
 
-    static void populateScores(Level level, TextView goldScore, TextView silverScore, TextView bronzeScore, TextView levelName) {
+    public static void populateScores(Level level, TextView goldScore, TextView silverScore, TextView bronzeScore, TextView levelName) {
         goldScore.setText(String.format("%s", level.goldScore));
         silverScore.setText(String.format("%s", level.silverScore));
         bronzeScore.setText(String.format("%s", level.bronzeScore));

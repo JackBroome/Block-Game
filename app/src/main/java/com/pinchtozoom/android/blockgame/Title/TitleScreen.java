@@ -1,4 +1,4 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Title;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.pinchtozoom.android.blockgame.Library.OpenGLRenderer;
+import com.pinchtozoom.android.blockgame.MainApp.GameWindowActivity;
+import com.pinchtozoom.android.blockgame.R;
 
 public class TitleScreen extends AppCompatActivity {
 
@@ -51,7 +53,7 @@ public class TitleScreen extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TitleScreen.this, MainActivity.class).putExtra("level", currentLevelID));
+                startActivity(new Intent(TitleScreen.this, GameWindowActivity.class).putExtra("level", currentLevelID));
             }
         });
     }

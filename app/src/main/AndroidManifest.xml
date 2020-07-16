@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".TitleScreen"
+            android:name=".Title.TitleScreen"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme">
             <intent-filter>
@@ -26,11 +26,11 @@
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".MainApp.GameWindowActivity"
             android:theme="@style/FullScreenTheme"
             android:screenOrientation="landscape" />
 
-        <activity android:name=".LevelSelect"
+        <activity android:name=".Title.LevelSelect"
             android:theme="@style/FullScreenTheme"
             android:screenOrientation="portrait"/>
     </application>

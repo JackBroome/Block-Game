@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    tools:context=".MainActivity">
+    tools:context=".MainApp.GameWindowActivity">
 
     <Button
         android:id="@+id/pause_button"
@@ -33,6 +33,13 @@
 
     <ImageView
         android:id="@+id/character"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/character2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"

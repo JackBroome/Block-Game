@@ -1,25 +1,27 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Objects;
+
+import com.pinchtozoom.android.blockgame.Library.JsonHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-class Level {
+public class Level {
 
-    int levelNumber;
+    public int levelNumber;
 
-    Tile [][] tiles;
-    Block [][] blocks;
+    public Tile[][] tiles;
+    public Block[][] blocks;
 
-    int numberOfRows;
-    int numberOfColumns;
+    private int numberOfRows;
+    private int numberOfColumns;
 
-    int bronzeScore;
-    int silverScore;
-    int goldScore;
-    int lowestMoves;
-    boolean canRotate;
+    public int bronzeScore;
+    public int silverScore;
+    public int goldScore;
+    private int lowestMoves;
+    private boolean canRotate;
 
-    void initialiseGrid(int level) {
+    public void initialiseGrid(int level) {
 
         try {
 
@@ -50,59 +52,59 @@ class Level {
                     switch (value) {
 
                         case "w":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.WALL, false);
+                            tiles[row][column] = Tile.createTile(row, column, Tile.TileType.WALL, false);
                             break;
 
                         case "v":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.VORTEX, true);
+                            tiles[row][column] = Tile.createTile(row, column, Tile.TileType.VORTEX, true);
                             break;
 
                         case "j":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.JELLY, false);
+                            tiles[row][column] = Tile.createTile(row, column, Tile.TileType.JELLY, false);
                             break;
 
                         case "h":
-                            tiles[row][column] = Tile.createTile(row, column, TileType.HOLE, true);
+                            tiles[row][column] = Tile.createTile(row, column, Tile.TileType.HOLE, true);
                             break;
 
                         case "s":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.STONE, false);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.STONE, false);
                             break;
 
                         case "s*":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.STONE, true);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.STONE, true);
                             break;
 
                         case "o":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.OIL, false);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.OIL, false);
                             break;
 
                         case "o*":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.OIL, true);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.OIL, true);
                             break;
 
                         case "b":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.BULLDOZER, false);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.BULLDOZER, false);
                             break;
 
                         case "b*":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.BULLDOZER, true);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.BULLDOZER, true);
                             break;
 
                         case "p":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.PAWN, false);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.PAWN, false);
                             break;
 
                         case "p*":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.PAWN, true);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.PAWN, true);
                             break;
 
                         case "c":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.CASTLE, false);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.CASTLE, false);
                             break;
 
                         case "c*":
-                            blocks[row][column] = Block.createBlock(row, column, BlockType.CASTLE, true);
+                            blocks[row][column] = Block.createBlock(row, column, Block.BlockType.CASTLE, true);
                             break;
 
                             default:

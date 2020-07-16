@@ -1,11 +1,18 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Objects;
 
-class Tile {
+public class Tile {
 
-    int column;
-    int row;
-    TileType tileType;
-    boolean canPassThrough;
+    public enum TileType {
+        HOLE,
+        JELLY,
+        VORTEX,
+        WALL
+    }
+
+    private int column;
+    private int row;
+    public TileType tileType;
+    public boolean canPassThrough;
 
     static Tile createTile(int row, int column, TileType tileType, boolean canPassThrough) {
         Tile tile = new Tile();

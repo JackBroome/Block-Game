@@ -1,9 +1,12 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Title;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.pinchtozoom.android.blockgame.Objects.Level;
+import com.pinchtozoom.android.blockgame.R;
 
 import java.util.ArrayList;
 

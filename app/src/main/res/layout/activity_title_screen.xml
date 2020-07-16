@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".TitleScreen">
+    tools:context=".Title.TitleScreen">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Block Game"
+        android:text="Escape"
         android:textAlignment="center"
         android:textColor="@color/gold"
         android:textSize="60sp"

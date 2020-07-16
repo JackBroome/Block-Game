@@ -1,4 +1,6 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Library;
+
+import com.pinchtozoom.android.blockgame.AppDelegate;
 
 import java.io.IOException;
 import java.io.InputStream;

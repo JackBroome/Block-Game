@@ -1,4 +1,4 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.Title;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.pinchtozoom.android.blockgame.MainApp.GameWindowActivity;
+import com.pinchtozoom.android.blockgame.Objects.Level;
+import com.pinchtozoom.android.blockgame.R;
 
 import java.util.ArrayList;
 
@@ -45,7 +49,7 @@ public class LevelSelectRecyclerViewAdapter extends RecyclerView.Adapter<LevelSe
         levelSelectViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context, MainActivity.class).putExtra("level", level.levelNumber));
+                context.startActivity(new Intent(context, GameWindowActivity.class).putExtra("level", level.levelNumber));
             }
         });
     }

@@ -1,6 +1,7 @@
-package com.pinchtozoom.android.blockgame;
+package com.pinchtozoom.android.blockgame.MainApp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,20 +22,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pinchtozoom.android.blockgame.Interface.BlockArrayCallbackListener;
+import com.pinchtozoom.android.blockgame.Interface.CallBackListener;
 import com.pinchtozoom.android.blockgame.Library.OnSwipeListener;
+import com.pinchtozoom.android.blockgame.Objects.Block;
+import com.pinchtozoom.android.blockgame.Objects.Level;
+import com.pinchtozoom.android.blockgame.Objects.Tile;
+import com.pinchtozoom.android.blockgame.R;
+import com.pinchtozoom.android.blockgame.Title.TitleScreen;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-interface CallBackListener {
-    void callback();
-}
-
-interface BlockArrayCallbackListener {
-    void callback(Block[][] blocks);
-}
-
-public class MainActivity extends AppCompatActivity {
+public class GameWindowActivity extends AppCompatActivity {
 
     int linearPositionTiles = 0, linearPositionBlocks = 0;
 
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         tileLayout.animate().alpha(1).setDuration(1500);
         blockLayout.animate().alpha(1).setDuration(1500);
 
-        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        final AlertDialog alertDialog = new AlertDialog.Builder(GameWindowActivity.this).create();
         alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         final View overlayLayout = getLayoutInflater().inflate(R.layout.level_overlay, null);
 
@@ -133,32 +133,28 @@ public class MainActivity extends AppCompatActivity {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                View pauseLayout = getLayoutInflater().inflate(R.layout.pause_layout, null);
+                final PauseDialog pauseDialog = new PauseDialog(GameWindowActivity.this);
+                pauseDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                pauseDialog.show();
 
-                Brain.populateScores(level,
-                        (TextView) pauseLayout.findViewById(R.id.gold_score),
-                        (TextView) pauseLayout.findViewById(R.id.silver_score),
-                        (TextView) pauseLayout.findViewById(R.id.bronze_score),
-                        null);
-
-                pauseLayout.findViewById(R.id.button_resume).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        alertDialog.dismiss();
-                    }
-                });
-                pauseLayout.findViewById(R.id.button_restart).setOnClickListener(new View.OnClickListener() {
+                pauseDialog.setRestartedClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         levelRestarted = true;
                         destroyLevel.callback();
-                        alertDialog.dismiss();
+                        pauseDialog.dismiss();
                     }
                 });
-                alertDialog.setView(pauseLayout);
-                alertDialog.show();
+
+                pauseDialog.setReturnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                        startActivity(new Intent(GameWindowActivity.this, TitleScreen.class));
+                    }
+                });
+
+                pauseDialog.populateScores(level);
             }
         });
 
@@ -263,16 +259,16 @@ public class MainActivity extends AppCompatActivity {
                         public boolean onSwipe(Direction direction) {
 
                             Log.w("", direction + "");
-                            Movement.moveCharacter(MainActivity.this, tilesArray, blocksArray, block, blockLayout, tileLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
+                            block.move(GameWindowActivity.this, tilesArray, blocksArray, blockLayout, tileLayout, new int[]{characterHeight, characterWidth}, direction, new CallBackListener() {
                                 @Override
                                 public void callback() {
-                                    Toast.makeText(MainActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GameWindowActivity.this, "level Complete", Toast.LENGTH_SHORT).show();
                                     destroyLevel.callback();
                                 }
                             }, new BlockArrayCallbackListener() {
                                 @Override
                                 public void callback(Block[][] blocks) {
-                                    MainActivity.this.blocksArray = blocks;
+                                    GameWindowActivity.this.blocksArray = blocks;
                                 }
                             });
                             return true;
@@ -311,9 +307,6 @@ public class MainActivity extends AppCompatActivity {
         public void callback() {
 
             pauseButton.setOnClickListener(null);
-
-            int r = tileLayout.getRowCount();
-            int c = tileLayout.getColumnCount();
 
             final int[] tileCount = {tileLayout.getRowCount() * tileLayout.getColumnCount()};
 
@@ -357,10 +350,10 @@ public class MainActivity extends AppCompatActivity {
             blockLayout.setAlpha(0f);
 
             Level level = new Level();
-            if (MainActivity.this.level.levelNumber == 3 || levelRestarted) {
-                level.initialiseGrid(MainActivity.this.level.levelNumber);
+            if (GameWindowActivity.this.level.levelNumber == 3 || levelRestarted) {
+                level.initialiseGrid(GameWindowActivity.this.level.levelNumber);
             } else {
-                level.initialiseGrid(MainActivity.this.level.levelNumber + 1);
+                level.initialiseGrid(GameWindowActivity.this.level.levelNumber + 1);
             }
 
             final SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -368,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
 
             levelRestarted = false;
 
-            MainActivity.this.level = level;
+            GameWindowActivity.this.level = level;
 
             linearPositionBlocks = 0;
             linearPositionTiles = 0;
@@ -379,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
             tileLayout.animate().alpha(1).setDuration(1500);
             blockLayout.animate().alpha(1).setDuration(1500);
 
-            final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            final AlertDialog alertDialog = new AlertDialog.Builder(GameWindowActivity.this).create();
             alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             final View overlayLayout = getLayoutInflater().inflate(R.layout.level_overlay, null);
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LevelSelect">
+    tools:context=".Title.LevelSelect">
 
     <TextView
         android:id="@+id/title"
